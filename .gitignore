@@ -1,0 +1,12 @@
+﻿################################################################################
+# Данный GITIGNORE-файл был автоматически создан Microsoft(R) Visual Studio.
+################################################################################
+
+/KnowledgeAccountinSystem.Data/obj/Debug/netcoreapp3.1
+/KnowledgeAccountinSystem.Data/obj
+/KnowledgeAccountinSystem.Data/bin/Debug/netcoreapp3.1
+/KnowledgeAccountinSystem.Business/obj
+/KnowledgeAccountinSystem.Business/bin/Debug/netcoreapp3.1
+/KnowledgeAccountinSystem/obj
+/KnowledgeAccountinSystem/bin/Debug/netcoreapp3.1
+/KnowledgeAccountinSystem/.vs/KnowledgeAccountinSystem

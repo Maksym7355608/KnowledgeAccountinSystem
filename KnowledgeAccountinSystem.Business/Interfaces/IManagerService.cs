@@ -1,0 +1,59 @@
+﻿using KnowledgeAccountinSystem.Business.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using KnowledgeAccountinSystem.Business.Validation;
+
+namespace KnowledgeAccountinSystem.Business.Interfaces
+{
+    public interface IManagerService
+    {
+        /// <summary>
+        /// This method get all programer`s
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<ProgrammerModel> GetAllProgrammers();
+
+        /// <summary>
+        /// This method choose programmer by manager
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="entity"></param>
+        /// <exception cref="KASException">
+        /// Programmer is not found
+        /// </exception>
+        /// <returns></returns>
+        Task ChooseProgrammerAsync(int id, ProgrammerModel entity);
+
+        /// <summary>
+        /// This method get choosen programmers
+        /// </summary>
+        /// <param name="id"></param>
+        /// <exception cref="KASException">
+        /// no choosen programmers
+        /// </exception>
+        /// <returns></returns>
+        Task<IEnumerable<ProgrammerModel>> GetChoosenProgrammersAsync(int id);
+
+        /// <summary>
+        /// This method get choosen programmer
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="entity"></param>
+        /// <exception cref="KASException">
+        /// Programmer is not found
+        /// </exception>
+        /// <returns></returns>
+        Task<ProgrammerModel> GetChoosenProgrammerAsync(int id, ProgrammerModel entity);
+
+        /// <summary>
+        /// This method delete choosen programmer
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="entity"></param>
+        /// <exception cref="KASException">
+        /// Programmer is not found
+        /// </exception>
+        /// <returns></returns>
+        Task DeleteProgrammerAsync(int id, ProgrammerModel entity);
+    }
+}
