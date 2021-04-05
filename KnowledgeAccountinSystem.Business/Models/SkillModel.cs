@@ -10,6 +10,6 @@ namespace KnowledgeAccountinSystem.Business.Models
         public Data.Entities.SkillName Name { get; set; }
         public Data.Entities.SkillLevel Level { get; set; }
 
-        public string ProgrammerId { get; set; }
+        public int ProgrammerId { get; set; }
     }
 }

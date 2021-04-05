@@ -31,6 +31,18 @@ namespace KnowledgeAccountinSystem.Business.Services
             await context.ManagerRepository.ChooseProgrammerAsync(id, mapper.Map<Programmer>(entity));
         }
 
+        public async Task DeleteAccountAsync(int id)
+        {
+            if (!context.AccountRepository.GetAll().Select(x => x.Id).Contains(id))
+                throw new KASException("no users with same id!", HttpStatusCode.BadRequest);
+            
+            await context.ManagerRepository.DeleteByIdAsync(id);
+            var user = await context.ManagerRepository.GetByIdAsync(id);
+            await context.AccountRepository.DeleteByIdAsync(user.User.Id);
+
+            await context.SaveAsync();
+        }
+
         public async Task DeleteProgrammerAsync(int id, ProgrammerModel entity)
         {
             if (context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(entity.Id))
@@ -59,6 +71,27 @@ namespace KnowledgeAccountinSystem.Business.Services
             IEnumerable<ProgrammerModel> choosen = mapper.Map<IEnumerable<ProgrammerModel>>
                 (await context.ManagerRepository?.GetChoosenProgrammersAsync(id));
             return choosen ?? throw new KASException("no choosen programmers", HttpStatusCode.NotFound);
+        }
+
+        public async Task UpdateAccountAsync(UserModel model)
+        {
+            if (!context.AccountRepository.GetAll().Select(x => x.Id).Contains(model.Id))
+                throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
+            if (string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.Surname))
+                throw new KASException("model incorrect");
+
+
+            var user = await context.AccountRepository.GetByIdAsync(model.Id);
+            var manager = context.ManagerRepository.GetAll().First(x => x.User.Id == model.Id);
+            manager.User = mapper.Map<User>(model);
+
+            context.AccountRepository.Update(manager.User);
+            await context.SaveAsync();
+        }
+
+        public int GetRoleId(int userId)
+        {
+            return context.ManagerRepository.GetAll().FirstOrDefault(x => x.User.Id == userId).Id;
         }
     }
 }

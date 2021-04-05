@@ -15,6 +15,11 @@ namespace KnowledgeAccountinSystem.Data.Repositories
             this.context = context;
         }
 
+        public void Add(Skill entity)
+        {
+            context.Skills.Add(entity);
+        }
+
         public async Task AddAsync(Skill entity) => await context.Skills.AddAsync(entity);
 
         public async Task DeleteByIdAsync(int id) => context.Skills.Remove(await context.Skills.FindAsync(id));

@@ -32,7 +32,7 @@ namespace KnowledgeAccountinSystem.API.Controllers
                 var userToken = await service.LogInAsync(model.Email, model.Password);
                 return Ok(userToken);
             }
-            catch(KASException e)
+            catch (KASException e)
             {
                 return Unauthorized(e.Message);
             }
@@ -43,8 +43,9 @@ namespace KnowledgeAccountinSystem.API.Controllers
         {
             try
             {
-                await service.RegisterAsync(new UserModel { 
-                    Name= model.Name,
+                await service.RegisterAsync(new UserModel
+                {
+                    Name = model.Name,
                     Surname = model.Surname,
                     Email = model.Email,
                     Password = model.Password
@@ -57,39 +58,12 @@ namespace KnowledgeAccountinSystem.API.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<ActionResult> Update([FromBody] UserModel model)
+        [HttpPut("change/{id}")]
+        public async Task<ActionResult> ChangeToManager(int id)
         {
             try
             {
-                await service.UpdateAccountAsync(model);
-                return Ok();
-            }catch(KASException e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] UserModel model)
-        {
-            try
-            {
-                await service.DeleteAccountAsync(model);
-                return Ok();
-            }
-            catch (KASException e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpPut("change")]
-        public async Task<ActionResult> ChangeToManager([FromBody] UserModel model)
-        {
-            try
-            {
-                await service.ChangeRoleToManagerAsync(model);
+                await service.ChangeRoleToManagerAsync(id);
                 return Ok();
             }
             catch (KASException e)

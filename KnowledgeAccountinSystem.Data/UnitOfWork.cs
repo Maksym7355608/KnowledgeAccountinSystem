@@ -22,5 +22,6 @@ namespace KnowledgeAccountinSystem.Data
         public IManagerRepository ManagerRepository => new ManagerRepository(context);
 
         public async Task SaveAsync() => await context.SaveChangesAsync();
+        public void Save() => context.SaveChanges();
     }
 }

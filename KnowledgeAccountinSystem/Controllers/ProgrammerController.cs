@@ -15,11 +15,13 @@ namespace KnowledgeAccountinSystem.API.Controllers
     public class ProgrammerController : ControllerBase
     {
         private readonly IProgrammerService service;
-        private int programmerId => int.Parse(User.Claims.ElementAt(0).Value);
+        private int programmerId => service.GetRoleId(userId);
+        private int userId => int.Parse(User.Claims.ElementAt(0).Value);
 
         public ProgrammerController(IProgrammerService service)
         {
             this.service = service;
+            //programmerId = service.GetRoleId(userId);
         }
 
         [HttpGet]
@@ -53,7 +55,7 @@ namespace KnowledgeAccountinSystem.API.Controllers
         {
             try
             {
-                await service.AddSkillAsync(programmerId, skill);
+                service.AddSkillAsync(programmerId, skill);
             }
             catch (KASException)
             {
@@ -88,6 +90,34 @@ namespace KnowledgeAccountinSystem.API.Controllers
                 return BadRequest();
             }
             return Ok();
+        }
+
+        [HttpPut("account")]
+        public async Task<ActionResult> UpdateManagerAccount([FromBody] UserModel model)
+        {
+            try
+            {
+                await service.UpdateAccountAsync(model);
+                return Ok();
+            }
+            catch (KASException e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete("account")]
+        public async Task<ActionResult> DeleteManagerAccount()
+        {
+            try
+            {
+                await service.DeleteAccountAsync(programmerId);
+                return Ok();
+            }
+            catch (KASException e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

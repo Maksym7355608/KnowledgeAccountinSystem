@@ -15,11 +15,12 @@ namespace KnowledgeAccountinSystem.API.Controllers
     public class ManagerController : ControllerBase
     {
         private readonly IManagerService service;
-        private int managerId => int.Parse(User.Claims.ElementAt(0).Value);
+        private readonly int managerId;
 
         public ManagerController(IManagerService service)
         {
             this.service = service;
+            managerId = service.GetRoleId(int.Parse(User.Claims.ElementAt(0).Value));
         }
 
         [HttpGet]
@@ -74,6 +75,34 @@ namespace KnowledgeAccountinSystem.API.Controllers
             try
             {
                 await service.DeleteProgrammerAsync(managerId, programmer);
+                return Ok();
+            }
+            catch (KASException e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPut("account")]
+        public async Task<ActionResult> UpdateManagerAccount([FromBody] UserModel model)
+        {
+            try
+            {
+                await service.UpdateAccountAsync(model);
+                return Ok();
+            }
+            catch (KASException e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete("account")]
+        public async Task<ActionResult> DeleteManagerAccount()
+        {
+            try
+            {
+                await service.DeleteAccountAsync(managerId);
                 return Ok();
             }
             catch (KASException e)

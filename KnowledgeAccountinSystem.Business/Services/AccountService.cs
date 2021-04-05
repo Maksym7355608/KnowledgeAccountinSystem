@@ -77,61 +77,57 @@ namespace KnowledgeAccountinSystem.Business.Services
         /// <returns></returns>
         public async Task UpdateAccountAsync(UserModel model)
         {
-            if (context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(model.Id))
+            if (!context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(model.Id))
                 throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
             if (string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.Surname))
                 throw new KASException("model incorrect");
 
-            context.ProgrammerRepository.Update(mapper.Map<Programmer>(model));
+            context.AccountRepository.Update(mapper.Map<User>(model));
             await context.SaveAsync();
         }
 
         /// <summary>
         /// This method delete user account
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="userId"></param>
         /// <exception cref="KASException">id is not found</exception>
         /// <returns></returns>
-        public async Task DeleteAccountAsync(UserModel model)
+        public async Task DeleteAccountAsync(int userId)
         {
-            if (context.AccountRepository.GetAll().Select(x => x.Id).Contains(model.Id))
+            if (!context.AccountRepository.GetAll().Select(x => x.Id).Contains(userId))
                 throw new KASException("no users with same id!", HttpStatusCode.BadRequest);
-
-            await context.AccountRepository.DeleteByIdAsync(model.Id);
+            var user = await context.AccountRepository.GetByIdAsync(userId);
+            switch (user.Role)
+            {
+                case Roles.Programmer:
+                    int pId = context.ProgrammerRepository.GetAll().Where(x => x.User.Id == userId).First().Id;
+                    await context.ProgrammerRepository.DeleteByIdAsync(pId);
+                    break;
+                case Roles.Manager:
+                    int mId = context.ManagerRepository.GetAll().Where(x => x.User.Id == userId).First().Id;
+                    await context.ManagerRepository.DeleteByIdAsync(mId);
+                    break;
+            }
+            await context.AccountRepository.DeleteByIdAsync(userId);
             await context.SaveAsync();
         }
 
-        public async Task ChangeRoleToManagerAsync(UserModel model)
+        public async Task ChangeRoleToManagerAsync(int userId)
         {
-            if (context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(model.Id))
+            if (!context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(userId))
                 throw new KASException("no users with same id!", HttpStatusCode.BadRequest);
 
-            var user = await context.ProgrammerRepository.GetByIdAsync(model.Id);
-            var user_skills = user.Skills;
+            var programmer = await context.ProgrammerRepository.GetByIdAsync(userId);
+            var programmer_skills = programmer.Skills;
 
-            foreach (var skill in user_skills)
+            foreach (var skill in programmer_skills)
                 await context.SkillRepository.DeleteByIdAsync(skill.Id);
 
-            user.User.Role = Roles.Manager;
+            var user = programmer.User;
+            user.Role = Roles.Manager;
+            await context.ProgrammerRepository.DeleteByIdAsync(programmer.Id);
+            await context.ManagerRepository.AddAsync(new Manager { User = user });
 
-            context.AccountRepository.Update(user.User);
-            await context.SaveAsync();
-        }
-
-        private async Task ChangeRoleToManagerAsync2(UserModel model)
-        {
-            if(context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(model.Id))
-                throw new KASException("no users with same id!", HttpStatusCode.BadRequest);
-
-            var user = await context.ProgrammerRepository.GetByIdAsync(model.Id);
-            var user_skills = user.Skills;
-
-            foreach (var skill in user_skills)
-                await context.SkillRepository.DeleteByIdAsync(skill.Id);
-
-            user.User.Role = Roles.Manager;
-
-            context.AccountRepository.Update(user.User);
             await context.SaveAsync();
         }
     }

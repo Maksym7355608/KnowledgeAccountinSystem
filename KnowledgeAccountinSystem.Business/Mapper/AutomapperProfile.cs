@@ -14,6 +14,10 @@ namespace KnowledgeAccountinSystem.Business.Mapper
         {
             CreateMap<User, UserModel>().ReverseMap();
 
+            CreateMap<Skill, SkillModel>()
+                .ForMember(x => x.ProgrammerId, y => y.MapFrom(z => z.Programmer.Id))
+                .ReverseMap();
+
             CreateMap<Programmer, ProgrammerModel>()
                 .ForMember(x => x.Name, y => y.MapFrom(z => z.User.Name))
                 .ForMember(x => x.Surname, y => y.MapFrom(z => z.User.Surname))

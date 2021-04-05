@@ -5,7 +5,7 @@ namespace KnowledgeAccountinSystem.Data.Entities
     public class Programmer
     {
         public int Id { get; set; }
-        public User User { get;set; }
-        public IEnumerable<Skill> Skills { get; set; }
+        public virtual User User { get;set; }
+        public virtual IEnumerable<Skill> Skills { get; set; }
     }
 }

@@ -11,5 +11,6 @@ namespace KnowledgeAccountinSystem.Data
         IManagerRepository ManagerRepository { get; }
 
         Task SaveAsync();
+        void Save();
     }
 }

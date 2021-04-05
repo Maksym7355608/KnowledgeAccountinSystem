@@ -5,7 +5,7 @@ using KnowledgeAccountinSystem.Business.Validation;
 
 namespace KnowledgeAccountinSystem.Business.Interfaces
 {
-    public interface IManagerService
+    public interface IManagerService : IAccountChanger
     {
         /// <summary>
         /// This method get all programer`s
