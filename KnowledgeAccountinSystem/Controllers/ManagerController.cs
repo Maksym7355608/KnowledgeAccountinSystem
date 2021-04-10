@@ -15,12 +15,12 @@ namespace KnowledgeAccountinSystem.API.Controllers
     public class ManagerController : ControllerBase
     {
         private readonly IManagerService service;
-        private readonly int managerId;
+        private int userId => int.Parse(User.Claims.ElementAt(0).Value);
+        private int managerId => service.GetRoleId(userId);
 
         public ManagerController(IManagerService service)
         {
             this.service = service;
-            managerId = service.GetRoleId(int.Parse(User.Claims.ElementAt(0).Value));
         }
 
         [HttpGet]
@@ -42,12 +42,12 @@ namespace KnowledgeAccountinSystem.API.Controllers
             }            
         }
 
-        [HttpGet("choosen/{programmer}")]
-        public async Task<ActionResult<ProgrammerModel>> GetChoosenProgrammer(ProgrammerModel programmer)
+        [HttpGet("choosen/{programmerId}")]
+        public async Task<ActionResult<ProgrammerModel>> GetChoosenProgrammer(int programmerId)
         {
             try
             {
-                return Ok(await service.GetChoosenProgrammerAsync(managerId, programmer));
+                return Ok(await service.GetChoosenProgrammerAsync(managerId, programmerId));
             }
             catch (KASException e)
             {
@@ -55,12 +55,12 @@ namespace KnowledgeAccountinSystem.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult> ChooseProgrammer([FromBody] ProgrammerModel programmer)
+        [HttpPost("{programmerId}")]
+        public async Task<ActionResult> ChooseProgrammer(int programmerId)
         {
             try
             {
-                await service.ChooseProgrammerAsync(managerId, programmer);
+                await service.ChooseProgrammerAsync(managerId, programmerId);
                 return Ok();
             }
             catch (KASException e)
@@ -69,12 +69,12 @@ namespace KnowledgeAccountinSystem.API.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<ActionResult> DeleteProgrammer([FromBody] ProgrammerModel programmer)
+        [HttpDelete("{programmerId}")]
+        public async Task<ActionResult> DeleteProgrammer(int programmerId)
         {
             try
             {
-                await service.DeleteProgrammerAsync(managerId, programmer);
+                await service.DeleteProgrammerAsync(managerId, programmerId);
                 return Ok();
             }
             catch (KASException e)

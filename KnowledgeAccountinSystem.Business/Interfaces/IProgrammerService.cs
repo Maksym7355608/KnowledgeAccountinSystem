@@ -32,7 +32,7 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// <exception cref="KASException">id is not found</exception>
         /// <exception cref="KASException">exist skill</exception>
         /// <returns></returns>
-        void AddSkillAsync(int programmerId, SkillModel skill);
+        Task AddSkillAsync(int programmerId, SkillModel skill);
 
         /// <summary>
         /// This method delete programmer`s skills
@@ -42,7 +42,7 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// <exception cref="KASException">id is not found</exception>
         /// <exception cref="KASException">skill is not found</exception>
         /// <returns></returns>
-        Task DeleteSkillAsync(int programmerId, SkillModel skill);
+        Task DeleteSkillAsync(int programmerId, int skillId);
 
         /// <summary>
         /// This method update programmer`s skills

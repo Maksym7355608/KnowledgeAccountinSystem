@@ -58,18 +58,5 @@ namespace KnowledgeAccountinSystem.API.Controllers
             }
         }
 
-        [HttpPut("change/{id}")]
-        public async Task<ActionResult> ChangeToManager(int id)
-        {
-            try
-            {
-                await service.ChangeRoleToManagerAsync(id);
-                return Ok();
-            }
-            catch (KASException e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
     }
 }

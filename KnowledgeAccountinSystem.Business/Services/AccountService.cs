@@ -112,23 +112,16 @@ namespace KnowledgeAccountinSystem.Business.Services
             await context.SaveAsync();
         }
 
-        public async Task ChangeRoleToManagerAsync(int userId)
+        private int GetRoleId(int userId)
         {
-            if (!context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(userId))
-                throw new KASException("no users with same id!", HttpStatusCode.BadRequest);
-
-            var programmer = await context.ProgrammerRepository.GetByIdAsync(userId);
-            var programmer_skills = programmer.Skills;
-
-            foreach (var skill in programmer_skills)
-                await context.SkillRepository.DeleteByIdAsync(skill.Id);
-
-            var user = programmer.User;
-            user.Role = Roles.Manager;
-            await context.ProgrammerRepository.DeleteByIdAsync(programmer.Id);
-            await context.ManagerRepository.AddAsync(new Manager { User = user });
-
-            await context.SaveAsync();
+            try
+            {
+                return context.ProgrammerRepository.GetAll().FirstOrDefault(x => x.User.Id == userId).Id;
+            }
+            catch (KASException)
+            {
+                throw new KASException("Unauthorized on this role", HttpStatusCode.Unauthorized);
+            }
         }
     }
 }

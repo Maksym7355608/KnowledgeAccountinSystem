@@ -25,7 +25,7 @@ namespace KnowledgeAccountinSystem.Data.Repositories
 
         public async Task DeleteByIdAsync(int id) => context.Users.Remove(await context.Users.FindAsync(id));
 
-        public IEnumerable<User> GetAll() => context.Users;
+        public IEnumerable<User> GetAll() => context.Users.AsNoTracking();
 
         public async Task<User> GetByIdAsync(int id) => await context.Users.FindAsync(id);
 
@@ -34,7 +34,6 @@ namespace KnowledgeAccountinSystem.Data.Repositories
 
         public void Update(User entity)
         {
-            context.Entry(entity).State = EntityState.Detached;
             context.Users.Update(entity);
         }
 

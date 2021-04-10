@@ -6,8 +6,8 @@ namespace KnowledgeAccountinSystem.Data.Interfaces
 {
     public interface IManagerRepository : IRepository<Manager>
     {
-        Task ChooseProgrammerAsync(int id, Programmer entity);
+        Task ChooseProgrammerAsync(int id, int programmerId);
         Task<IEnumerable<Programmer>> GetChoosenProgrammersAsync(int id);
-        Task DeleteProgrammerAsync(int id, Programmer entity);
+        Task DeleteProgrammerAsync(int id, int programmerId);
     }
 }

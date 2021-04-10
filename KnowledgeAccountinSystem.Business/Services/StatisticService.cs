@@ -27,10 +27,15 @@ namespace KnowledgeAccountinSystem.Business.Services
         {
             try
             {
-                return mapper.Map<IEnumerable<ProgrammerModel>>(context.ProgrammerRepository
-                     .GetAll()
-                     .OrderByDescending(x => x)
-                     .Take(count));
+                var programmers = context.ProgrammerRepository.GetAll();
+                var o_by_skill_count = programmers.OrderByDescending(x => x.Skills.Count());
+                var o_by_skill_count2 = o_by_skill_count.ThenByDescending(x =>
+                x.Skills.Where(y =>
+                y.Level == x.Skills.Select(z => z.Level).Max())
+                .Count());
+
+                var result = o_by_skill_count2.Take(count);
+                return mapper.Map<IEnumerable<ProgrammerModel>>(result);
             }
             catch (KASException)
             {
@@ -68,10 +73,11 @@ namespace KnowledgeAccountinSystem.Business.Services
         {
             try
             {
-                return mapper.Map<IEnumerable<ManagerModel>>(context.ManagerRepository
-                .GetAll()
-                .OrderByDescending(x => x.Programmers.Count())
-                .Take(count));
+                return mapper
+                    .Map<IEnumerable<ManagerModel>>(context.ManagerRepository
+                    .GetAll()
+                    .OrderByDescending(x => x.Programmers.Count())
+                    .Take(count));
             }
             catch (KASException)
             {

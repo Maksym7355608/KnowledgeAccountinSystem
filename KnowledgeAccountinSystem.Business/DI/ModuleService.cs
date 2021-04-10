@@ -23,6 +23,7 @@ namespace KnowledgeAccountinSystem.Business.DI
             services.AddScoped<IProgrammerService, ProgrammerService>();
             services.AddScoped<IManagerService, ManagerService>();
             services.AddScoped<IStatisticService, StatisticService>();
+            services.AddScoped<IAdminService, AdminService>();
         }
     }
 }

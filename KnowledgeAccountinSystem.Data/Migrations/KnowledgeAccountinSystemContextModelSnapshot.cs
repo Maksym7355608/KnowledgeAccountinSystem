@@ -43,7 +43,7 @@ namespace KnowledgeAccountinSystem.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ManagerId")
+                    b.Property<int>("ManagerId")
                         .HasColumnType("int");
 
                     b.Property<int?>("UserId")
@@ -71,7 +71,7 @@ namespace KnowledgeAccountinSystem.Data.Migrations
                     b.Property<int>("Name")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProgrammerId")
+                    b.Property<int>("ProgrammerId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -119,13 +119,17 @@ namespace KnowledgeAccountinSystem.Data.Migrations
 
             modelBuilder.Entity("KnowledgeAccountinSystem.Data.Entities.Programmer", b =>
                 {
-                    b.HasOne("KnowledgeAccountinSystem.Data.Entities.Manager", null)
+                    b.HasOne("KnowledgeAccountinSystem.Data.Entities.Manager", "Manager")
                         .WithMany("Programmers")
-                        .HasForeignKey("ManagerId");
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("KnowledgeAccountinSystem.Data.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
+
+                    b.Navigation("Manager");
 
                     b.Navigation("User");
                 });
@@ -134,7 +138,9 @@ namespace KnowledgeAccountinSystem.Data.Migrations
                 {
                     b.HasOne("KnowledgeAccountinSystem.Data.Entities.Programmer", "Programmer")
                         .WithMany("Skills")
-                        .HasForeignKey("ProgrammerId");
+                        .HasForeignKey("ProgrammerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Programmer");
                 });

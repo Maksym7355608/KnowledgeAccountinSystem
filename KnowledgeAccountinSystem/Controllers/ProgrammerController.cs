@@ -31,9 +31,9 @@ namespace KnowledgeAccountinSystem.API.Controllers
             {
                 return Ok(await service.GetSkillsAsync(programmerId));
             }
-            catch (KASException)
+            catch (KASException e)
             {
-                return BadRequest();
+                return BadRequest(e.Message);
             }
         }
 
@@ -44,9 +44,9 @@ namespace KnowledgeAccountinSystem.API.Controllers
             {
                 return Ok(await service.GetSkillByIdAsync(programmerId, skillId));
             }
-            catch (KASException)
+            catch (KASException e)
             {
-                return BadRequest();
+                return BadRequest(e.Message);
             }
         }
 
@@ -55,11 +55,11 @@ namespace KnowledgeAccountinSystem.API.Controllers
         {
             try
             {
-                service.AddSkillAsync(programmerId, skill);
+                await service.AddSkillAsync(programmerId, skill);
             }
-            catch (KASException)
+            catch (KASException e)
             {
-                return BadRequest();
+                return BadRequest(e.Message);
             }
             return Ok();
         }
@@ -71,23 +71,23 @@ namespace KnowledgeAccountinSystem.API.Controllers
             {
                 await service.EditSkillAsync(programmerId, skill);
             }
-            catch (KASException)
+            catch (KASException e)
             {
-                return BadRequest();
+                return BadRequest(e.Message);
             }
             return Ok();
         }
 
-        [HttpDelete]
-        public async Task<ActionResult> DeleteSkill(SkillModel skill)
+        [HttpDelete("{skillId}")]
+        public async Task<ActionResult> DeleteSkill(int skillId)
         {
             try
             {
-                await service.DeleteSkillAsync(programmerId, skill);
+                await service.DeleteSkillAsync(programmerId, skillId);
             }
-            catch (KASException)
+            catch (KASException e)
             {
-                return BadRequest();
+                return BadRequest(e.Message);
             }
             return Ok();
         }

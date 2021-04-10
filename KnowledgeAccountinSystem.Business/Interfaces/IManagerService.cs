@@ -22,7 +22,7 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// Programmer is not found
         /// </exception>
         /// <returns></returns>
-        Task ChooseProgrammerAsync(int id, ProgrammerModel entity);
+        Task ChooseProgrammerAsync(int id, int programmerId);
 
         /// <summary>
         /// This method get choosen programmers
@@ -43,7 +43,7 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// Programmer is not found
         /// </exception>
         /// <returns></returns>
-        Task<ProgrammerModel> GetChoosenProgrammerAsync(int id, ProgrammerModel entity);
+        Task<ProgrammerModel> GetChoosenProgrammerAsync(int id, int programmerId);
 
         /// <summary>
         /// This method delete choosen programmer
@@ -54,6 +54,6 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// Programmer is not found
         /// </exception>
         /// <returns></returns>
-        Task DeleteProgrammerAsync(int id, ProgrammerModel entity);
+        Task DeleteProgrammerAsync(int id, int programmerId);
     }
 }

@@ -23,32 +23,34 @@ namespace KnowledgeAccountinSystem.Business.Services
             this.mapper = mapper;
         }
 
-        public async Task ChooseProgrammerAsync(int id, ProgrammerModel entity)
+        public async Task ChooseProgrammerAsync(int id, int programmerId)
         {
-            if (context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(entity.Id))
+            if (!context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(programmerId))
                 throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
 
-            await context.ManagerRepository.ChooseProgrammerAsync(id, mapper.Map<Programmer>(entity));
+            await context.ManagerRepository.ChooseProgrammerAsync(id, programmerId);
+            await context.SaveAsync();
         }
 
         public async Task DeleteAccountAsync(int id)
         {
             if (!context.AccountRepository.GetAll().Select(x => x.Id).Contains(id))
                 throw new KASException("no users with same id!", HttpStatusCode.BadRequest);
-            
-            await context.ManagerRepository.DeleteByIdAsync(id);
+                        
             var user = await context.ManagerRepository.GetByIdAsync(id);
+            await context.ManagerRepository.DeleteByIdAsync(id);
             await context.AccountRepository.DeleteByIdAsync(user.User.Id);
 
             await context.SaveAsync();
         }
 
-        public async Task DeleteProgrammerAsync(int id, ProgrammerModel entity)
+        public async Task DeleteProgrammerAsync(int id, int programmerId)
         {
-            if (context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(entity.Id))
+            if (!context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(programmerId))
                 throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
 
-            await context.ManagerRepository.DeleteProgrammerAsync(id, mapper.Map<Programmer>(entity));
+            await context.ManagerRepository.DeleteProgrammerAsync(id, programmerId);
+            await context.SaveAsync();
         }
 
         public IEnumerable<ProgrammerModel> GetAllProgrammers()
@@ -56,14 +58,14 @@ namespace KnowledgeAccountinSystem.Business.Services
             return mapper.Map<IEnumerable<ProgrammerModel>>(context.ProgrammerRepository.GetAll());
         }
 
-        public async Task<ProgrammerModel> GetChoosenProgrammerAsync(int id, ProgrammerModel entity)
+        public async Task<ProgrammerModel> GetChoosenProgrammerAsync(int id, int programmerId)
         {
-            if (context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(entity.Id))
+            if (!context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(programmerId))
                 throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
 
             IEnumerable<ProgrammerModel> choosen = await GetChoosenProgrammersAsync(id) ?? null;
 
-            return mapper.Map<ProgrammerModel>(choosen.FirstOrDefault(x => x == entity));
+            return mapper.Map<ProgrammerModel>(choosen?.FirstOrDefault(x => x.Id == programmerId));
         }
 
         public async Task<IEnumerable<ProgrammerModel>> GetChoosenProgrammersAsync(int id)
@@ -80,18 +82,21 @@ namespace KnowledgeAccountinSystem.Business.Services
             if (string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.Surname))
                 throw new KASException("model incorrect");
 
-
             var user = await context.AccountRepository.GetByIdAsync(model.Id);
-            var manager = context.ManagerRepository.GetAll().First(x => x.User.Id == model.Id);
-            manager.User = mapper.Map<User>(model);
-
-            context.AccountRepository.Update(manager.User);
+            context.AccountRepository.Update(mapper.Map(model, user));
             await context.SaveAsync();
         }
 
         public int GetRoleId(int userId)
         {
-            return context.ManagerRepository.GetAll().FirstOrDefault(x => x.User.Id == userId).Id;
+            try
+            {
+                return context.ManagerRepository.GetAll().FirstOrDefault(x => x.User.Id == userId).Id;
+            }
+            catch (KASException)
+            {
+                throw new KASException("Unauthorized on this role", HttpStatusCode.Unauthorized);
+            }
         }
     }
 }

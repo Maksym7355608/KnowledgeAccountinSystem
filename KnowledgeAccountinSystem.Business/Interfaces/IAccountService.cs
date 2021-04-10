@@ -7,6 +7,5 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
     {
         Task<string> LogInAsync(string email, string password);
         Task RegisterAsync(UserModel model);
-        Task ChangeRoleToManagerAsync(int userId);
     }
 }
