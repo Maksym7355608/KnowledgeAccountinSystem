@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace KnowledgeAccountinSystem.Business.Models
+﻿namespace KnowledgeAccountinSystem.Business.Models
 {
     public class SkillModel
     {

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace KnowledgeAccountinSystem.Data.Entities
+﻿namespace KnowledgeAccountinSystem.Data.Entities
 {
     public class Skill
     {
@@ -9,12 +7,12 @@ namespace KnowledgeAccountinSystem.Data.Entities
         public SkillLevel Level { get; set; }
 
         public int ProgrammerId { get; set; }
-        public virtual Programmer Programmer { get; set; }
+        public Programmer Programmer { get; set; }
     }
 
     public enum SkillName
     {
-        dotNET,
+        dotNET = 1,
         Java,
         Python,
         JavaScript,

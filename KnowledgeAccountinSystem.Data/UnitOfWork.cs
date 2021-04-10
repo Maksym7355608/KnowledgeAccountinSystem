@@ -7,7 +7,7 @@ namespace KnowledgeAccountinSystem.Data
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private KnowledgeAccountinSystemContext context;
+        private readonly KnowledgeAccountinSystemContext context;
         private AccountRepository account;
         private ProgrammerRepository programmer;
         private ManagerRepository manager;
@@ -18,28 +18,35 @@ namespace KnowledgeAccountinSystem.Data
             this.context = context;
         }
 
-        public IAccountRepository AccountRepository => account ??= new AccountRepository(context);
+        public IAccountRepository AccountRepository => account 
+            ??= new AccountRepository(context);
 
-        public ISkillRepository SkillRepository => skill ??= new SkillRepository(context);
+        public ISkillRepository SkillRepository => skill 
+            ??= new SkillRepository(context);
         
-        public IProgrammerRepository ProgrammerRepository => programmer ??= new ProgrammerRepository(context);
+        public IProgrammerRepository ProgrammerRepository => programmer 
+            ??= new ProgrammerRepository(context);
 
-        public IManagerRepository ManagerRepository => manager ??= new ManagerRepository(context);
+        public IManagerRepository ManagerRepository => manager 
+            ??= new ManagerRepository(context);
 
-        public async Task SaveAsync() => await context.SaveChangesAsync();
-        public void Save() => context.SaveChanges();
+        public async Task SaveAsync() => await context
+            .SaveChangesAsync();
+        public void Save() => context
+            .SaveChanges();
+
 
         private bool disposed = false;
 
         public virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!disposed)
             {
                 if (disposing)
                 {
                     context.Dispose();
                 }
-                this.disposed = true;
+                disposed = true;
             }
         }
 

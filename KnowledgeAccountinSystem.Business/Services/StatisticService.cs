@@ -4,11 +4,8 @@ using KnowledgeAccountinSystem.Business.Models;
 using KnowledgeAccountinSystem.Business.Validation;
 using KnowledgeAccountinSystem.Data;
 using KnowledgeAccountinSystem.Data.Entities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace KnowledgeAccountinSystem.Business.Services
 {
@@ -28,13 +25,15 @@ namespace KnowledgeAccountinSystem.Business.Services
             try
             {
                 var programmers = context.ProgrammerRepository.GetAll();
-                var o_by_skill_count = programmers.OrderByDescending(x => x.Skills.Count());
-                var o_by_skill_count2 = o_by_skill_count.ThenByDescending(x =>
-                x.Skills.Where(y =>
-                y.Level == x.Skills.Select(z => z.Level).Max())
+
+                var orderBySkillCount = programmers.OrderByDescending(x => x.Skills.Count());
+
+                var orderBySkillLevel = orderBySkillCount.ThenByDescending(x =>
+                x.Skills.Where(y => y.Level == x.Skills
+                .Select(z => z.Level).Max())
                 .Count());
 
-                var result = o_by_skill_count2.Take(count);
+                var result = orderBySkillLevel.Take(count).AsEnumerable();
                 return mapper.Map<IEnumerable<ProgrammerModel>>(result);
             }
             catch (KASException)
@@ -77,7 +76,7 @@ namespace KnowledgeAccountinSystem.Business.Services
                     .Map<IEnumerable<ManagerModel>>(context.ManagerRepository
                     .GetAll()
                     .OrderByDescending(x => x.Programmers.Count())
-                    .Take(count));
+                    .Take(count).AsEnumerable());
             }
             catch (KASException)
             {

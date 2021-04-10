@@ -1,7 +1,7 @@
 ﻿using KnowledgeAccountinSystem.Data.Entities;
 using KnowledgeAccountinSystem.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace KnowledgeAccountinSystem.Data.Repositories
@@ -15,18 +15,14 @@ namespace KnowledgeAccountinSystem.Data.Repositories
             this.context = context;
         }
 
-        public void Add(Programmer entity)
-        {
-            throw new System.NotImplementedException();
-        }
+        public async Task AddAsync(Programmer entity) => await context.Programmers
+            .AddAsync(entity);
 
-        public async Task AddAsync(Programmer entity)
-        {
-            await context.Programmers.AddAsync(entity);
-        }
-        public async Task DeleteByIdAsync(int id) => context.Programmers.Remove(await context.Programmers.FindAsync(id));
+        public async Task DeleteByIdAsync(int id) => context.Programmers
+            .Remove(await context.Programmers
+            .FindAsync(id));
 
-        public IEnumerable<Programmer> GetAll() => context.Programmers
+        public IQueryable<Programmer> GetAll() => context.Programmers
             .Include(x => x.Skills)
             .Include(x => x.User)
             .AsNoTracking();
@@ -37,6 +33,7 @@ namespace KnowledgeAccountinSystem.Data.Repositories
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
 
-        public void Update(Programmer entity) => context.Programmers.Update(entity);
+        public void Update(Programmer entity) => context.Programmers
+            .Update(entity);
     }
 }

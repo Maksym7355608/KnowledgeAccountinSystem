@@ -55,7 +55,7 @@ namespace KnowledgeAccountinSystem.Business.Services
 
         public IEnumerable<ProgrammerModel> GetAllProgrammers()
         {
-            return mapper.Map<IEnumerable<ProgrammerModel>>(context.ProgrammerRepository.GetAll());
+            return mapper.Map<IEnumerable<ProgrammerModel>>(context.ProgrammerRepository.GetAll().AsEnumerable());
         }
 
         public async Task<ProgrammerModel> GetChoosenProgrammerAsync(int id, int programmerId)

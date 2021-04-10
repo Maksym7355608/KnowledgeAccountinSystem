@@ -21,7 +21,6 @@ namespace KnowledgeAccountinSystem.API.Controllers
         public ProgrammerController(IProgrammerService service)
         {
             this.service = service;
-            //programmerId = service.GetRoleId(userId);
         }
 
         [HttpGet]

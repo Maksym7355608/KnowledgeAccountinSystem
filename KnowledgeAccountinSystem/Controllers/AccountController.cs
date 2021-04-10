@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using KnowledgeAccountinSystem.API.Models;
+﻿using KnowledgeAccountinSystem.API.Models;
 using KnowledgeAccountinSystem.Business.Interfaces;
 using KnowledgeAccountinSystem.Business.Models;
 using KnowledgeAccountinSystem.Business.Validation;
@@ -16,12 +15,10 @@ namespace KnowledgeAccountinSystem.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService service;
-        private readonly IMapper mapper;
-
-        public AccountController(IAccountService service, IMapper mapper)
+        
+        public AccountController(IAccountService service)
         {
             this.service = service;
-            this.mapper = mapper;
         }
 
         [HttpPost("login")]

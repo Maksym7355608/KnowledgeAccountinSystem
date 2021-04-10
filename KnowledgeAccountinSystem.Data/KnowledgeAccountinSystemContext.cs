@@ -15,12 +15,6 @@ namespace KnowledgeAccountinSystem.Data
         public KnowledgeAccountinSystemContext(DbContextOptions<KnowledgeAccountinSystemContext> options) : base(options)
         {
             Database.EnsureCreated();
-
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder builder)
-        {
-            builder.EnableSensitiveDataLogging();
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using KnowledgeAccountinSystem.Data.Entities;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace KnowledgeAccountinSystem.Data.Interfaces
 {
     public interface ISkillRepository : IRepository<Skill>
     {
-        IEnumerable<Skill> GetAllByProgrammerId(int programmerId);
+        IQueryable<Skill> GetAllByProgrammerId(int programmerId);
     }
 }

@@ -106,7 +106,9 @@ namespace KnowledgeAccountinSystem.Business.Services
             if (!context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(programmerId))
                 throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
 
-            return mapper.Map<IEnumerable<SkillModel>>(await Task.Run(() => context.SkillRepository.GetAllByProgrammerId(programmerId)));
+            return mapper.Map<IEnumerable<SkillModel>>((await Task.Run(() => 
+                context.SkillRepository.GetAllByProgrammerId(programmerId)))
+                .AsEnumerable());
         }
 
         public async Task UpdateAccountAsync(UserModel model)
@@ -123,8 +125,3 @@ namespace KnowledgeAccountinSystem.Business.Services
         }
     }
 }
-
-//skill.Name > Enum.GetValues(typeof(SkillName)).Cast<SkillName>().Max() ||
-//                skill.Name < Enum.GetValues(typeof(SkillName)).Cast<SkillName>().Min() ||
-//                skill.Level > Enum.GetValues(typeof(SkillLevel)).Cast<SkillLevel>().Max() ||
-//                skill.Level < Enum.GetValues(typeof(SkillLevel)).Cast<SkillLevel>().Min()

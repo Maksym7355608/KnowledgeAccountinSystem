@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
-using KnowledgeAccountinSystem.API.Models;
 using KnowledgeAccountinSystem.Business.Models;
 using KnowledgeAccountinSystem.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace KnowledgeAccountinSystem.Business.Mapper
 {

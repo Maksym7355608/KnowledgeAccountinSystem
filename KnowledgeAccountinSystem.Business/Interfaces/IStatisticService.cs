@@ -1,7 +1,5 @@
 ﻿using KnowledgeAccountinSystem.Business.Models;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using KnowledgeAccountinSystem.Business.Validation;
 
 namespace KnowledgeAccountinSystem.Business.Interfaces

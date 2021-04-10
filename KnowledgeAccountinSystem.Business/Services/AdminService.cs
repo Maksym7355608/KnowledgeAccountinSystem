@@ -90,9 +90,9 @@ namespace KnowledgeAccountinSystem.Business.Services
                     _ => throw new KASException(),
                 };
             }
-            catch(NullReferenceException e)
+            catch(NullReferenceException)
             {
-                throw e;
+                throw new NullReferenceException("user id incorrect");
             }
             catch (KASException)
             {
@@ -102,7 +102,7 @@ namespace KnowledgeAccountinSystem.Business.Services
 
         public IEnumerable<UserModel> GetUsers()
         {
-            return mapper.Map<IEnumerable<UserModel>>(context.AccountRepository.GetAll());
+            return mapper.Map<IEnumerable<UserModel>>(context.AccountRepository.GetAll().AsEnumerable());
         }
     }
 }

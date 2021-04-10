@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
@@ -20,7 +19,7 @@ namespace KnowledgeAccountinSystem.Business.Services
     {
         private readonly IUnitOfWork context;
         private readonly IMapper mapper;
-        private IConfiguration config;
+        private readonly IConfiguration config;
 
         public AccountService(IUnitOfWork context, IMapper mapper, IConfiguration config)
         {
@@ -66,62 +65,6 @@ namespace KnowledgeAccountinSystem.Business.Services
             user.Role = Roles.Programmer;
             await context.ProgrammerRepository.AddAsync(new Programmer { User = user });
             await context.SaveAsync();
-        }
-
-        /// <summary>
-        /// This method update user account
-        /// </summary>
-        /// <param name="model"></param>
-        /// <exception cref="KASException">id is not found</exception>
-        /// <exception cref="KASException">model incorrect</exception>
-        /// <returns></returns>
-        public async Task UpdateAccountAsync(UserModel model)
-        {
-            if (!context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(model.Id))
-                throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
-            if (string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.Surname))
-                throw new KASException("model incorrect");
-
-            context.AccountRepository.Update(mapper.Map<User>(model));
-            await context.SaveAsync();
-        }
-
-        /// <summary>
-        /// This method delete user account
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <exception cref="KASException">id is not found</exception>
-        /// <returns></returns>
-        public async Task DeleteAccountAsync(int userId)
-        {
-            if (!context.AccountRepository.GetAll().Select(x => x.Id).Contains(userId))
-                throw new KASException("no users with same id!", HttpStatusCode.BadRequest);
-            var user = await context.AccountRepository.GetByIdAsync(userId);
-            switch (user.Role)
-            {
-                case Roles.Programmer:
-                    int pId = context.ProgrammerRepository.GetAll().Where(x => x.User.Id == userId).First().Id;
-                    await context.ProgrammerRepository.DeleteByIdAsync(pId);
-                    break;
-                case Roles.Manager:
-                    int mId = context.ManagerRepository.GetAll().Where(x => x.User.Id == userId).First().Id;
-                    await context.ManagerRepository.DeleteByIdAsync(mId);
-                    break;
-            }
-            await context.AccountRepository.DeleteByIdAsync(userId);
-            await context.SaveAsync();
-        }
-
-        private int GetRoleId(int userId)
-        {
-            try
-            {
-                return context.ProgrammerRepository.GetAll().FirstOrDefault(x => x.User.Id == userId).Id;
-            }
-            catch (KASException)
-            {
-                throw new KASException("Unauthorized on this role", HttpStatusCode.Unauthorized);
-            }
         }
     }
 }
