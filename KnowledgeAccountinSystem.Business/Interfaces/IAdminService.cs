@@ -2,7 +2,6 @@
 using KnowledgeAccountinSystem.Business.Validation;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
 
 namespace KnowledgeAccountinSystem.Business.Interfaces
 {
@@ -12,8 +11,9 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// This method change user role
         /// </summary>
         /// <param name="userId"></param>
-        /// <exception cref="NullReferenceException">incorrect id</exception>
-        /// <exception cref="KASException">role id incorrect</exception>
+        /// <exception cref="AuthorizeException">incorrect id</exception>
+        /// <exception cref="UnuniqueException">admin must by 1</exception>
+        /// <exception cref="ModelException">incorrect choosen id</exception>
         /// <returns></returns>
         Task ChangeRoleAsync(int userId);
 

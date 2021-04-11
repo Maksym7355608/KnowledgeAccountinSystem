@@ -35,16 +35,13 @@ namespace KnowledgeAccountinSystem.Business.Services
                     await ChangeRoleToProgrammerAsync(userId);
                     break;
                 case Roles.Admin:
-                    throw new KASException("admin must be one", HttpStatusCode.BadRequest);
+                    throw new UnuniqueException("admin must be one", HttpStatusCode.BadRequest);
             }
             await context.SaveAsync();
         }
 
         private async Task ChangeRoleToManagerAsync(int userId)
         {
-            if (!context.AccountRepository.GetAll().Select(x => x.Id).Contains(userId))
-                throw new KASException("no users with same id!", HttpStatusCode.BadRequest);
-
             var programmer = await context.ProgrammerRepository.GetByIdAsync(GetRoleId(userId));
             var programmer_skills = programmer.Skills;
             if (programmer_skills != null)
@@ -76,7 +73,10 @@ namespace KnowledgeAccountinSystem.Business.Services
 
         private async Task<string> GetUserRoleAsync(int userId)
         {
-            return (await context.AccountRepository.GetByIdAsync(userId)).Role;
+            var user = await context.AccountRepository.GetByIdAsync(userId);
+            if (user.Equals(null))
+                throw new ModelException("uncorrect choosen id", HttpStatusCode.BadRequest);
+            return user.Role;
         }
 
         private int GetRoleId(int userId)
@@ -87,16 +87,12 @@ namespace KnowledgeAccountinSystem.Business.Services
                 {
                     Roles.Programmer => context.ProgrammerRepository.GetAll().FirstOrDefault(x => x.User.Id == userId).Id,
                     Roles.Manager => context.ManagerRepository.GetAll().FirstOrDefault(x => x.User.Id == userId).Id,
-                    _ => throw new KASException(),
+                    _ => throw new AuthorizeException(),
                 };
             }
-            catch(NullReferenceException)
+            catch (AuthorizeException)
             {
-                throw new NullReferenceException("user id incorrect");
-            }
-            catch (KASException)
-            {
-                throw new KASException("Unauthorized on this role", HttpStatusCode.Unauthorized);
+                throw new AuthorizeException("Undefined role", HttpStatusCode.Unauthorized);
             }
         }
 

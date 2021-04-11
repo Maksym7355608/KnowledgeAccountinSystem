@@ -17,10 +17,8 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// This method choose programmer by manager
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="entity"></param>
-        /// <exception cref="KASException">
-        /// Programmer is not found
-        /// </exception>
+        /// <param name="programmerId"></param>
+        /// <exception cref="ModelException">Programmer is not found</exception>
         /// <returns></returns>
         Task ChooseProgrammerAsync(int id, int programmerId);
 
@@ -28,9 +26,6 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// This method get choosen programmers
         /// </summary>
         /// <param name="id"></param>
-        /// <exception cref="KASException">
-        /// no choosen programmers
-        /// </exception>
         /// <returns></returns>
         Task<IEnumerable<ProgrammerModel>> GetChoosenProgrammersAsync(int id);
 
@@ -39,9 +34,7 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="entity"></param>
-        /// <exception cref="KASException">
-        /// Programmer is not found
-        /// </exception>
+        /// <exception cref="ModelException">Programmer is not found</exception>
         /// <returns></returns>
         Task<ProgrammerModel> GetChoosenProgrammerAsync(int id, int programmerId);
 
@@ -50,9 +43,7 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="entity"></param>
-        /// <exception cref="KASException">
-        /// Programmer is not found
-        /// </exception>
+        /// <exception cref="ModelException">Programmer is not found</exception>
         /// <returns></returns>
         Task DeleteProgrammerAsync(int id, int programmerId);
     }

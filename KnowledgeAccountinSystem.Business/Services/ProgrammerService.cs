@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KnowledgeAccountinSystem.Business.Extensions;
 using KnowledgeAccountinSystem.Business.Interfaces;
 using KnowledgeAccountinSystem.Business.Models;
 using KnowledgeAccountinSystem.Business.Validation;
@@ -25,13 +26,10 @@ namespace KnowledgeAccountinSystem.Business.Services
 
         public async Task AddSkillAsync(int programmerId, SkillModel skill)
         {
-            if (!context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(programmerId))
-                throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
-            if (context.SkillRepository.GetAllByProgrammerId(programmerId).Select(x => x.Name).Contains(skill.Name))
-                throw new KASException("this skill is already exists");
-            if (Enum.GetValues(typeof(SkillName)).Cast<SkillName>().Contains(skill.Name) ||
-                Enum.GetValues(typeof(SkillLevel)).Cast<SkillLevel>().Contains(skill.Level))
-                throw new KASException("uncorrect model", HttpStatusCode.BadRequest);
+            if (skill.IsSkillExist(context, programmerId))
+                throw new UnuniqueException("this skill is already exists");
+            if (skill.IsSkillModelNotValid())
+                throw new ModelException("uncorrect model", HttpStatusCode.BadRequest);
 
             skill.ProgrammerId = programmerId;
             await context.SkillRepository.AddAsync(mapper.Map<Skill>(skill));
@@ -40,9 +38,6 @@ namespace KnowledgeAccountinSystem.Business.Services
 
         public async Task DeleteAccountAsync(int id)
         {
-            if (!context.AccountRepository.GetAll().Select(x => x.Id).Contains(id))
-                throw new KASException("no users with same id!", HttpStatusCode.BadRequest);
-
             var user = (await context.ProgrammerRepository.GetByIdAsync(id)).User;
             await context.ProgrammerRepository.DeleteByIdAsync(id);
             await context.AccountRepository.DeleteByIdAsync(user.Id);
@@ -53,10 +48,8 @@ namespace KnowledgeAccountinSystem.Business.Services
         public async Task DeleteSkillAsync(int programmerId, int skillId)
         {
             var programmer = await context.ProgrammerRepository?.GetByIdAsync(programmerId);
-            if (programmer.Equals(null))
-                throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
             if (programmer.Skills.Select(x => x.Id).Contains(skillId))
-                throw new KASException("skill not found", HttpStatusCode.BadRequest);
+                throw new UnuniqueException("skill not found", HttpStatusCode.BadRequest);
 
             await context.SkillRepository.DeleteByIdAsync(skillId);
             await context.SaveAsync();
@@ -64,15 +57,10 @@ namespace KnowledgeAccountinSystem.Business.Services
 
         public async Task EditSkillAsync(int programmerId, SkillModel skill)
         {
-            if (!context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(programmerId))
-                throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
-            if (!context.SkillRepository.GetAllByProgrammerId(programmerId).Select(x => x.Name).Contains(skill.Name))
-                throw new KASException("you don`t have this skill");
-            if (context.SkillRepository.GetAllByProgrammerId(programmerId).Select(x => x.Name).Contains(skill.Name))
-                throw new KASException("this skill is already exists");
-            if (Enum.GetValues(typeof(SkillName)).Cast<SkillName>().Contains(skill.Name) ||
-                Enum.GetValues(typeof(SkillLevel)).Cast<SkillLevel>().Contains(skill.Level))
-                throw new KASException("uncorrect model", HttpStatusCode.BadRequest);
+            if (!skill.IsSkillExist(context, programmerId))
+                throw new UnuniqueException("you don`t have this skill");
+            if (skill.IsSkillModelNotValid())
+                throw new ModelException("uncorrect model", HttpStatusCode.BadRequest);
 
             skill.ProgrammerId = programmerId;
             var sk = await context.SkillRepository.GetByIdAsync(skill.Id);
@@ -83,40 +71,37 @@ namespace KnowledgeAccountinSystem.Business.Services
 
         public int GetRoleId(int userId)
         {
-            try
-            {
-                return context.ProgrammerRepository.GetAll().FirstOrDefault(x => x.User.Id == userId).Id;
-            }
-            catch (KASException)
-            {
-                throw new KASException("Unauthorized on this role", HttpStatusCode.Unauthorized);
-            }
+            int? roleId = context.ProgrammerRepository.GetAll().FirstOrDefault(x => x.User.Id == userId)?.Id;
+            if (roleId.HasValue)
+                throw new AuthorizeException("Unauthorized on this role", HttpStatusCode.Unauthorized);
+
+            return roleId.Value;
         }
 
         public async Task<SkillModel> GetSkillByIdAsync(int programmerId, int skillId)
         {
-            if (!context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(programmerId))
-                throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
-            var a = await GetSkillsAsync(programmerId);
-            return a.FirstOrDefault(x => x.Id == skillId);
+            var skills = await GetSkillsAsync(programmerId);
+            var skill = skills.FirstOrDefault(x => x.Id == skillId);
+
+            if (skill.Equals(null))
+                throw new ModelException("incorrect skill id", HttpStatusCode.BadRequest);
+
+            return skill;
         }
 
         public async Task<IEnumerable<SkillModel>> GetSkillsAsync(int programmerId)
         {
-            if (!context.ProgrammerRepository.GetAll().Select(x => x.Id).Contains(programmerId))
-                throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
-
-            return mapper.Map<IEnumerable<SkillModel>>((await Task.Run(() => 
+            return mapper.Map<IEnumerable<SkillModel>>((await Task.Run(() =>
                 context.SkillRepository.GetAllByProgrammerId(programmerId)))
                 .AsEnumerable());
         }
 
         public async Task UpdateAccountAsync(UserModel model)
         {
-            if (!context.AccountRepository.GetAll().Select(x => x.Id).Contains(model.Id))
-                throw new KASException("no programmers with same id!", HttpStatusCode.BadRequest);
-            if (string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.Surname))
-                throw new KASException("model incorrect");
+            if (model.Id.IsAccountNotExist(context))
+                throw new AuthorizeException("no programmers with same id!", HttpStatusCode.BadRequest);
+            if (model.IsModelValid())
+                throw new ModelException("uncorrect user model", HttpStatusCode.BadRequest);
 
 
             var user = await context.AccountRepository.GetByIdAsync(model.Id);

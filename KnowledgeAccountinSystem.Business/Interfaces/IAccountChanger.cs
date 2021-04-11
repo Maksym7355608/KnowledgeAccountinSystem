@@ -10,8 +10,7 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// This method update user account
         /// </summary>
         /// <param name="model"></param>
-        /// <exception cref="KASException">id is not found</exception>
-        /// <exception cref="KASException">model incorrect</exception>
+        /// <exception cref="ModelException">model incorrect</exception>
         /// <returns></returns>
         Task UpdateAccountAsync(UserModel model);
 
@@ -19,7 +18,6 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// This method delete user account
         /// </summary>
         /// <param name="userId"></param>
-        /// <exception cref="KASException">id is not found</exception>
         /// <returns></returns>
         Task DeleteAccountAsync(int userId);
 
@@ -27,7 +25,7 @@ namespace KnowledgeAccountinSystem.Business.Interfaces
         /// This method get id by role
         /// </summary>
         /// <param name="userId"></param>
-        /// <exception cref="KASException">id by role not found</exception>
+        /// <exception cref="AuthorizeException">id by role not found</exception>
         /// <returns></returns>
         int GetRoleId(int userId);
     }

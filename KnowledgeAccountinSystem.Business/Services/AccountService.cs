@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KnowledgeAccountinSystem.Business.Extensions;
 using KnowledgeAccountinSystem.Business.Interfaces;
 using KnowledgeAccountinSystem.Business.Models;
 using KnowledgeAccountinSystem.Business.Validation;
@@ -35,7 +36,7 @@ namespace KnowledgeAccountinSystem.Business.Services
         {
             var user = await FindUserAsync(email, password);
             if (user == null)
-                throw new KASException("Unauthorized", HttpStatusCode.Unauthorized);
+                throw new AuthorizeException("Unauthorized", HttpStatusCode.Unauthorized);
             else
                 return GetToken(user);
 
@@ -61,6 +62,11 @@ namespace KnowledgeAccountinSystem.Business.Services
 
         public async Task RegisterAsync(UserModel model)
         {
+            if (model.IsModelValid())
+                throw new ModelException("uncorrect user model", HttpStatusCode.BadRequest);
+            if (model.Email.IsEmailNotExist(context))
+                throw new UnuniqueException("this email already exist", HttpStatusCode.BadRequest);
+
             var user = mapper.Map<User>(model);
             user.Role = Roles.Programmer;
             await context.ProgrammerRepository.AddAsync(new Programmer { User = user });

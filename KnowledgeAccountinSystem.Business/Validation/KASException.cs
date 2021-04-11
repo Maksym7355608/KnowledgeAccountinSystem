@@ -5,7 +5,7 @@ namespace KnowledgeAccountinSystem.Business.Validation
 {
     public class KASException : Exception
     {
-        private readonly HttpStatusCode statusCode;
+        protected readonly HttpStatusCode statusCode;
         public KASException() : base()
         {
 
