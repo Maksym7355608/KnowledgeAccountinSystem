@@ -15,7 +15,7 @@ namespace KnowledgeAccountinSystem.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService service;
-        
+
         public AccountController(IAccountService service)
         {
             this.service = service;

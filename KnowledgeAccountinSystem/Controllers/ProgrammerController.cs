@@ -55,12 +55,12 @@ namespace KnowledgeAccountinSystem.API.Controllers
             try
             {
                 await service.AddSkillAsync(programmerId, skill);
+                return Ok();
             }
             catch (KASException e)
             {
                 return BadRequest(e.Message);
             }
-            return Ok();
         }
 
         [HttpPut]
@@ -69,12 +69,12 @@ namespace KnowledgeAccountinSystem.API.Controllers
             try
             {
                 await service.EditSkillAsync(programmerId, skill);
+                return Ok();
             }
             catch (KASException e)
             {
                 return BadRequest(e.Message);
             }
-            return Ok();
         }
 
         [HttpDelete("{skillId}")]
@@ -83,12 +83,12 @@ namespace KnowledgeAccountinSystem.API.Controllers
             try
             {
                 await service.DeleteSkillAsync(programmerId, skillId);
+                return Ok();
             }
             catch (KASException e)
             {
                 return BadRequest(e.Message);
             }
-            return Ok();
         }
 
         [HttpPut("account")]
