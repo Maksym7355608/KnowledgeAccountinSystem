@@ -43,7 +43,7 @@ namespace KnowledgeAccountinSystem.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ManagerId")
+                    b.Property<int?>("ManagerId")
                         .HasColumnType("int");
 
                     b.Property<int?>("UserId")
@@ -121,9 +121,7 @@ namespace KnowledgeAccountinSystem.Data.Migrations
                 {
                     b.HasOne("KnowledgeAccountinSystem.Data.Entities.Manager", "Manager")
                         .WithMany("Programmers")
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ManagerId");
 
                     b.HasOne("KnowledgeAccountinSystem.Data.Entities.User", "User")
                         .WithMany()

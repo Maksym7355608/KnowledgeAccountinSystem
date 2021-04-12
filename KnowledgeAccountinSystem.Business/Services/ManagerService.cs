@@ -4,6 +4,7 @@ using KnowledgeAccountinSystem.Business.Interfaces;
 using KnowledgeAccountinSystem.Business.Models;
 using KnowledgeAccountinSystem.Business.Validation;
 using KnowledgeAccountinSystem.Data;
+using KnowledgeAccountinSystem.Data.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -24,8 +25,11 @@ namespace KnowledgeAccountinSystem.Business.Services
 
         public async Task ChooseProgrammerAsync(int id, int programmerId)
         {
-            if (context.ProgrammerRepository?.GetByIdAsync(programmerId) == null)
+            Programmer programmer = await context.ProgrammerRepository?.GetByIdAsync(programmerId);
+            if (programmer == null)
                 throw new ModelException("uncorrect choosen id");
+            if (programmer.ManagerId != null)
+                throw new UnuniqueException("Programmer exist");
 
             await context.ManagerRepository.ChooseProgrammerAsync(id, programmerId);
             await context.SaveAsync();
@@ -43,7 +47,7 @@ namespace KnowledgeAccountinSystem.Business.Services
         public async Task DeleteProgrammerAsync(int id, int programmerId)
         {
             IEnumerable<ProgrammerModel> choosen = await GetChoosenProgrammersAsync(id);
-            var programmer = choosen.FirstOrDefault(x => x.Id == programmerId);
+            ProgrammerModel programmer = choosen.FirstOrDefault(x => x.Id == programmerId);
 
             if (programmer.Equals(null))
                 throw new ModelException("programmer not found");
@@ -60,9 +64,9 @@ namespace KnowledgeAccountinSystem.Business.Services
         public async Task<ProgrammerModel> GetChoosenProgrammerAsync(int id, int programmerId)
         {
             IEnumerable<ProgrammerModel> choosen = await GetChoosenProgrammersAsync(id);
-            var programmer = choosen.FirstOrDefault(x => x.Id == programmerId);
+            ProgrammerModel programmer = choosen.FirstOrDefault(x => x.Id == programmerId);
 
-            if (programmer.Equals(null))
+            if (programmer == null)
                 throw new ModelException("programmer not found");
 
             return mapper.Map<ProgrammerModel>(programmer);
@@ -79,7 +83,7 @@ namespace KnowledgeAccountinSystem.Business.Services
         {
             if (model.Id.IsAccountNotExist(context))
                 throw new AuthorizeException("no programmers with same id!", HttpStatusCode.BadRequest);
-            if (model.IsModelValid())
+            if (model.IsModelInvalid())
                 throw new ModelException("uncorrect user model", HttpStatusCode.BadRequest);
 
             var user = await context.AccountRepository.GetByIdAsync(model.Id);
@@ -90,7 +94,7 @@ namespace KnowledgeAccountinSystem.Business.Services
         public int GetRoleId(int userId)
         {
             int? roleId = context.ManagerRepository.GetAll().FirstOrDefault(x => x.User.Id == userId)?.Id;
-            if(roleId.HasValue)
+            if(!roleId.HasValue)
                 throw new AuthorizeException("Unauthorized on this role", HttpStatusCode.Unauthorized);
 
             return roleId.Value;

@@ -88,6 +88,7 @@ namespace KnowledgeAccountinSystem.API.Controllers
         {
             try
             {
+                model.Id = userId;
                 await service.UpdateAccountAsync(model);
                 return Ok();
             }

@@ -92,10 +92,11 @@ namespace KnowledgeAccountinSystem.API.Controllers
         }
 
         [HttpPut("account")]
-        public async Task<ActionResult> UpdateManagerAccount([FromBody] UserModel model)
+        public async Task<ActionResult> UpdateProgrammerAccount([FromBody] UserModel model)
         {
             try
             {
+                model.Id = userId;
                 await service.UpdateAccountAsync(model);
                 return Ok();
             }
@@ -106,7 +107,7 @@ namespace KnowledgeAccountinSystem.API.Controllers
         }
 
         [HttpDelete("account")]
-        public async Task<ActionResult> DeleteManagerAccount()
+        public async Task<ActionResult> DeleteProgrammerAccount()
         {
             try
             {

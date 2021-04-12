@@ -52,7 +52,7 @@ namespace KnowledgeAccountinSystem.Business.Services
                     .Select(x => x.Skills
                     .Select(y => y.Name));
 
-                var result = skills
+                var result = skills.AsEnumerable()
                     .Aggregate((current, next) => current.Concat(next))
                     .GroupBy(x => x)
                     .OrderByDescending(x => x.Count())

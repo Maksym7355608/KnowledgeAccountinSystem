@@ -48,7 +48,7 @@ namespace KnowledgeAccountinSystem.Business.Services
         public async Task DeleteSkillAsync(int programmerId, int skillId)
         {
             var programmer = await context.ProgrammerRepository?.GetByIdAsync(programmerId);
-            if (programmer.Skills.Select(x => x.Id).Contains(skillId))
+            if (!programmer.Skills.Select(x => x.Id).Contains(skillId))
                 throw new UnuniqueException("skill not found", HttpStatusCode.BadRequest);
 
             await context.SkillRepository.DeleteByIdAsync(skillId);
@@ -72,7 +72,7 @@ namespace KnowledgeAccountinSystem.Business.Services
         public int GetRoleId(int userId)
         {
             int? roleId = context.ProgrammerRepository.GetAll().FirstOrDefault(x => x.User.Id == userId)?.Id;
-            if (roleId.HasValue)
+            if (!roleId.HasValue)
                 throw new AuthorizeException("Unauthorized on this role", HttpStatusCode.Unauthorized);
 
             return roleId.Value;
@@ -81,9 +81,9 @@ namespace KnowledgeAccountinSystem.Business.Services
         public async Task<SkillModel> GetSkillByIdAsync(int programmerId, int skillId)
         {
             var skills = await GetSkillsAsync(programmerId);
-            var skill = skills.FirstOrDefault(x => x.Id == skillId);
+            SkillModel skill = skills.FirstOrDefault(x => x.Id == skillId);
 
-            if (skill.Equals(null))
+            if (skill == null)
                 throw new ModelException("incorrect skill id", HttpStatusCode.BadRequest);
 
             return skill;
@@ -100,7 +100,7 @@ namespace KnowledgeAccountinSystem.Business.Services
         {
             if (model.Id.IsAccountNotExist(context))
                 throw new AuthorizeException("no programmers with same id!", HttpStatusCode.BadRequest);
-            if (model.IsModelValid())
+            if (model.IsModelInvalid())
                 throw new ModelException("uncorrect user model", HttpStatusCode.BadRequest);
 
 

@@ -62,9 +62,9 @@ namespace KnowledgeAccountinSystem.Business.Services
 
         public async Task RegisterAsync(UserModel model)
         {
-            if (model.IsModelValid())
+            if (model.IsModelInvalid())
                 throw new ModelException("uncorrect user model", HttpStatusCode.BadRequest);
-            if (model.Email.IsEmailNotExist(context))
+            if (model.Email.IsEmailExist(context))
                 throw new UnuniqueException("this email already exist", HttpStatusCode.BadRequest);
 
             var user = mapper.Map<User>(model);

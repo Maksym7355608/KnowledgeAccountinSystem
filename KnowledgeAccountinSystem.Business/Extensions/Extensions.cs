@@ -8,7 +8,7 @@ namespace KnowledgeAccountinSystem.Business.Extensions
 {
     public static class Extensions
     {
-        public static bool IsModelValid(this UserModel model)
+        public static bool IsModelInvalid(this UserModel model)
         {
             if (string.IsNullOrEmpty(model.Name) ||
                string.IsNullOrEmpty(model.Surname) ||
@@ -16,9 +16,9 @@ namespace KnowledgeAccountinSystem.Business.Extensions
                string.IsNullOrEmpty(model.Password) ||
                !char.IsUpper(model.Name[0]) ||
                !char.IsUpper(model.Surname[0]))
-                return false;
-            else
                 return true;
+            else
+                return false;
         }
 
         public static bool IsAccountNotExist(this int id, IUnitOfWork context)
@@ -31,7 +31,7 @@ namespace KnowledgeAccountinSystem.Business.Extensions
 
         public static bool IsSkillModelNotValid(this SkillModel model)
         {
-            if (Enum.GetValues(typeof(SkillName)).Cast<SkillName>().Contains(model.Name) ||
+            if (Enum.GetValues(typeof(SkillName)).Cast<SkillName>().Contains(model.Name) &&
                 Enum.GetValues(typeof(SkillLevel)).Cast<SkillLevel>().Contains(model.Level))
                 return false;
             else 
@@ -46,12 +46,12 @@ namespace KnowledgeAccountinSystem.Business.Extensions
                 return false;
         }
 
-        public static bool IsEmailNotExist(this string email, IUnitOfWork context)
+        public static bool IsEmailExist(this string email, IUnitOfWork context)
         {
             if (context.AccountRepository.GetAll().Select(x => x.Email).Contains(email))
-                return false;
-            else
                 return true;
+            else
+                return false;
         }
     }
 }

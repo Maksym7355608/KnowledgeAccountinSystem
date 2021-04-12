@@ -4,11 +4,9 @@ using KnowledgeAccountinSystem.Business.Models;
 using KnowledgeAccountinSystem.Business.Validation;
 using KnowledgeAccountinSystem.Data;
 using KnowledgeAccountinSystem.Data.Entities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace KnowledgeAccountinSystem.Business.Services
@@ -42,7 +40,8 @@ namespace KnowledgeAccountinSystem.Business.Services
 
         private async Task ChangeRoleToManagerAsync(int userId)
         {
-            var programmer = await context.ProgrammerRepository.GetByIdAsync(GetRoleId(userId));
+            int roleId = GetRoleId(userId);
+            var programmer = await context.ProgrammerRepository.GetByIdAsync(roleId);
             var programmer_skills = programmer.Skills;
             if (programmer_skills != null)
                 foreach (var skill in programmer_skills)
@@ -50,7 +49,7 @@ namespace KnowledgeAccountinSystem.Business.Services
 
             var user = await context.AccountRepository.GetByIdAsync(userId);
             user.Role = Roles.Manager;
-            await context.ProgrammerRepository.DeleteByIdAsync(GetRoleId(userId));
+            await context.ProgrammerRepository.DeleteByIdAsync(roleId);
             context.AccountRepository.Update(user);
             await context.ManagerRepository.AddAsync(new Manager { User = user });
         }
